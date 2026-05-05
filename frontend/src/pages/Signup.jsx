@@ -4,7 +4,7 @@ import api from '../api/axiosConfig';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { useAuth } from '../context/AuthContext';
-import { Layout } from 'lucide-react';
+import { Orbit, ArrowRight, Users, BarChart3, Zap, CheckCircle2 } from 'lucide-react';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +15,7 @@ const Signup = () => {
   });
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -49,25 +49,19 @@ const Signup = () => {
     if (errors[id]) setErrors(prev => ({ ...prev, [id]: null }));
   };
 
-  const isFormValid = formData.name.trim() && 
-                      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) && 
-                      formData.password.length >= 6 && 
-                      formData.password === formData.confirmPassword;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setApiError('');
     
     if (!validate()) return;
 
-    setLoading(true);
+    setIsLoading(true);
     try {
       await api.post('/auth/signup', { 
         name: formData.name, 
         email: formData.email, 
         password: formData.password 
       });
-      // Automatically login after successful signup
       await login(formData.email, formData.password);
       navigate('/dashboard');
     } catch (err) {
@@ -77,82 +71,138 @@ const Signup = () => {
         setApiError(err.response?.data?.message || 'Failed to sign up');
       }
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen py-12 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <div className="w-full max-w-md p-8 mx-4 bg-white/80 backdrop-blur-xl border border-white shadow-2xl rounded-2xl animate-in fade-in zoom-in-95 duration-300">
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center justify-center w-12 h-12 mb-4 text-white bg-indigo-600 rounded-xl shadow-lg shadow-indigo-200">
-            <Layout className="w-6 h-6" />
+    <div className="flex items-center justify-center min-h-screen auth-bg p-6 lg:p-12 overflow-hidden relative">
+      {/* Dynamic Background Elements */}
+      <div className="auth-mesh-gradient"></div>
+      <div className="auth-orb w-[600px] h-[600px] bg-indigo-600/15 top-[-150px] left-[-150px] animate-float-orb"></div>
+      <div className="auth-orb w-[500px] h-[500px] bg-violet-600/15 bottom-[-100px] right-[-100px] animate-float-orb" style={{ animationDirection: 'reverse' }}></div>
+
+      <div className="w-full max-w-5xl animate-fade-in-scale relative z-10 flex flex-col lg:flex-row gap-12 items-center">
+        {/* Left Side: Branding/Value Prop */}
+        <div className="hidden lg:flex flex-col lg:w-5/12 text-white p-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-10 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
+            <Orbit className="w-9 h-9 text-white" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Create an account</h2>
-          <p className="mt-2 text-sm text-gray-500">Start managing your tasks today.</p>
+          <h1 className="text-6xl font-black tracking-tight leading-[1.1] mb-8">
+            Join the <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">future of work.</span>
+          </h1>
+          <p className="text-xl text-slate-400 mb-12 leading-relaxed font-medium">
+            Streamline your projects and empower your team with the most intuitive management platform.
+          </p>
+          
+          <div className="space-y-6">
+            {[
+              'Advanced Kanban Boards',
+              'Real-time Collaboration',
+              'Powerful Data Analytics'
+            ].map((item, index) => (
+              <div key={index} className="flex items-center gap-4 group">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 group-hover:bg-emerald-500/20 transition-all">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                </div>
+                <span className="text-slate-300 font-bold text-lg">{item}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        
-        {apiError && (
-          <div className="p-4 mb-6 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
-            <svg className="w-5 h-5 text-red-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-            </svg>
-            {apiError}
+
+        {/* Right Side: Form Card */}
+        <div className="w-full lg:w-7/12">
+          <div className="glass-card-dark p-8 md:p-12 rounded-[40px] shadow-2xl border border-white/10 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            
+            <div className="mb-10 text-center lg:text-left">
+              <h2 className="text-4xl font-black text-white mb-3">Get Started</h2>
+              <p className="text-slate-400 font-bold text-lg">Create your free account today</p>
+            </div>
+
+            {apiError && (
+              <div className="p-4 mb-8 text-sm font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-2xl animate-shake">
+                {apiError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Full Name</label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="John Doe"
+                    value={formData.name}
+                    onChange={handleChange}
+                    error={errors.name}
+                    className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:bg-white/10 mb-0"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Email Address</label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="name@company.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    error={errors.email}
+                    className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:bg-white/10 mb-0"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Password</label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleChange}
+                    error={errors.password}
+                    className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:bg-white/10 mb-0"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Confirm</label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    error={errors.confirmPassword}
+                    className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:bg-white/10 mb-0"
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                variant="primary"
+                className="w-full py-5 text-xl font-black btn-glow mt-4 rounded-2xl"
+                isLoading={isLoading}
+              >
+                Create Account
+              </Button>
+            </form>
+
+            <div className="mt-10 pt-8 border-t border-white/5 text-center lg:text-left">
+              <p className="text-slate-400 font-bold text-lg">
+                Already have an account?{' '}
+                <Link to="/login" className="text-indigo-400 hover:text-indigo-300 transition-all ml-1 border-b-2 border-indigo-400/30 hover:border-indigo-400">
+                  Log in
+                </Link>
+              </p>
+            </div>
           </div>
-        )}
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            label="Full Name"
-            type="text"
-            id="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="John Doe"
-            error={errors.name}
-          />
-
-          <Input
-            label="Email"
-            type="email"
-            id="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="you@example.com"
-            error={errors.email}
-          />
-          
-          <Input
-            label="Password"
-            type="password"
-            id="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="••••••••"
-            error={errors.password}
-          />
-
-          <Input
-            label="Confirm Password"
-            type="password"
-            id="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            placeholder="••••••••"
-            error={errors.confirmPassword}
-          />
-          
-          <Button type="submit" className="w-full mt-6" isLoading={loading} disabled={!isFormValid}>
-            Create account
-          </Button>
-        </form>
-        
-        <p className="mt-8 text-sm text-center text-gray-600">
-          Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-500 hover:underline transition-colors">
-            Log in
-          </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

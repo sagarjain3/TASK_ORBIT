@@ -3,15 +3,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Input from '../components/Input';
 import Button from '../components/Button';
-import { Layout } from 'lucide-react';
+import { Orbit, ArrowRight, CheckCircle } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -35,91 +34,95 @@ const Login = () => {
     
     if (!validate()) return;
     
-    setLoading(true);
+    setIsLoading(true);
     try {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
       setApiError(err.response?.data?.message || 'Failed to login. Please check your credentials.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <div className="w-full max-w-md p-8 mx-4 bg-white/80 backdrop-blur-xl border border-white shadow-2xl rounded-2xl animate-in fade-in zoom-in-95 duration-300">
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center justify-center w-12 h-12 mb-4 text-white bg-indigo-600 rounded-xl shadow-lg shadow-indigo-200">
-            <Layout className="w-6 h-6" />
+    <div className="flex items-center justify-center min-h-screen auth-bg p-6">
+      {/* Dynamic Background Elements */}
+      <div className="auth-mesh-gradient"></div>
+      <div className="auth-orb w-[500px] h-[500px] bg-indigo-600/20 top-[-100px] right-[-100px] animate-float-orb"></div>
+      <div className="auth-orb w-[400px] h-[400px] bg-violet-600/20 bottom-[-50px] left-[-50px] animate-float-orb" style={{ animationDirection: 'reverse' }}></div>
+
+      <div className="w-full max-w-md animate-fade-in-scale relative z-10">
+        <div className="mb-10 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-6 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-2xl shadow-indigo-500/40 animate-float-orb">
+            <Orbit className="w-9 h-9 text-white" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Welcome back</h2>
-          <p className="mt-2 text-sm text-gray-500">Please enter your details to sign in.</p>
+          <h1 className="text-4xl font-extrabold tracking-tight text-white mb-3">Welcome Back</h1>
+          <p className="text-slate-400 font-medium">Elevate your productivity with TaskOrbit</p>
+        </div>
+
+        <div className="glass-card-dark p-10 rounded-[32px] shadow-2xl border border-white/10">
+          {apiError && (
+            <div className="p-4 mb-6 text-sm font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl animate-shake">
+              {apiError}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={errors.email}
+                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:bg-white/10"
+              />
+            </div>
+            
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Password</label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={errors.password}
+                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus:bg-white/10"
+              />
+            </div>
+
+            <div className="flex items-center justify-end py-1">
+              <Link to="#" className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+                Forgot password?
+              </Link>
+            </div>
+
+            <Button
+              type="submit"
+              variant="primary"
+              className="w-full py-4 text-lg btn-glow"
+              isLoading={isLoading}
+            >
+              Sign In
+            </Button>
+          </form>
+
+          <div className="mt-10 text-center">
+            <p className="text-slate-400 font-medium">
+              New to TaskOrbit?{' '}
+              <Link to="/signup" className="text-indigo-400 font-bold hover:text-indigo-300 transition-colors ml-1 underline underline-offset-4">
+                Create an account
+              </Link>
+            </p>
+          </div>
         </div>
         
-        {apiError && (
-          <div className="p-4 mb-6 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
-            <svg className="w-5 h-5 text-red-400 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-            </svg>
-            {apiError}
-          </div>
-        )}
-        
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <Input
-            label="Email"
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (errors.email) setErrors({ ...errors, email: null });
-            }}
-            placeholder="Enter your email"
-            error={errors.email}
-          />
-          
-          <Input
-            label="Password"
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              if (errors.password) setErrors({ ...errors, password: null });
-            }}
-            placeholder="••••••••"
-            error={errors.password}
-          />
-
-          <div className="flex items-center justify-between mt-2">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-              />
-              <label htmlFor="remember-me" className="block ml-2 text-sm text-gray-700">
-                Remember me
-              </label>
-            </div>
-           
-          </div>
-          
-          <Button type="submit" className="w-full mt-6" isLoading={loading}>
-            Sign in
-          </Button>
-        </form>
-        
-        <p className="mt-8 text-sm text-center text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/signup" className="font-semibold text-indigo-600 hover:text-indigo-500 hover:underline transition-colors">
-            Sign up
-          </Link>
+        <p className="mt-8 text-center text-slate-500 text-xs font-medium uppercase tracking-[0.2em]">
+          © 2026 TaskOrbit. All rights reserved.
         </p>
       </div>
     </div>

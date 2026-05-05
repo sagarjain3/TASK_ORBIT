@@ -188,46 +188,59 @@ const ProjectDetail = () => {
   const assignableMembers = project?.members?.filter(m => m.role !== 'admin').map(m => m.user) || [];
 
   return (
-    <div className="flex flex-col min-h-screen p-4 bg-gray-50">
-      <div className="flex items-center justify-between mb-8">
+    <div className="flex flex-col min-h-full p-8 lg:p-12 bg-transparent">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 animate-fade-in">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800 tracking-tight">{project?.name || 'Project Board'}</h1>
-          <p className="text-gray-500 mt-1">Manage tasks across different stages</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex -space-x-2">
-            {project?.members?.map((m) => (
-              m.user?.avatar ? (
-                <img key={m.user._id} src={m.user.avatar} alt={m.user.name} className="w-8 h-8 rounded-full border-2 border-gray-50" title={`${m.user.name} (${m.role})`} />
-              ) : (
-                <div key={m.user?._id || Math.random()} className="w-8 h-8 rounded-full border-2 border-gray-50 bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600" title={`${m.user?.name} (${m.role})`}>
-                  {m.user?.name?.charAt(0).toUpperCase()}
-                </div>
-              )
-            ))}
+          <div className="flex items-center gap-2 mb-2">
+            <span className="w-8 h-1 bg-indigo-500 rounded-full"></span>
+            <span className="text-[11px] font-bold text-indigo-500 uppercase tracking-[0.2em]">Project Board</span>
           </div>
-          {isAdmin && (
-            <div className="flex items-center gap-3">
+          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">{project?.name || 'Loading Board...'}</h1>
+          <p className="text-slate-500 mt-2 font-medium">Manage and track your project tasks</p>
+        </div>
+        
+        <div className="mt-8 md:mt-0 flex flex-col md:items-end gap-6">
+          <div className="flex items-center gap-4">
+            <div className="flex -space-x-3">
+              {project?.members?.map((m) => (
+                <div key={m.user?._id || Math.random()} className="relative group">
+                  {m.user?.avatar ? (
+                    <img src={m.user.avatar} alt={m.user.name} className="w-10 h-10 rounded-xl border-2 border-white shadow-sm object-cover" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-xl border-2 border-white bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm">
+                      {m.user?.name?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                    {m.user?.name} ({m.role})
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {isAdmin && (
               <button
                 onClick={() => setIsMemberModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 font-medium text-white transition-all duration-200 bg-indigo-600 rounded-lg shadow-sm hover:bg-indigo-700 hover:shadow"
-            >
-              <UserPlus className="w-4 h-4" />
-              Add Member
-            </button>
+                className="p-2.5 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-all shadow-sm"
+              >
+                <UserPlus className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+
+          {isAdmin && (
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 font-medium text-white transition-all duration-200 bg-indigo-600 rounded-lg shadow-sm hover:bg-indigo-700 hover:shadow"
+              className="flex items-center gap-2 px-6 py-3.5 font-bold text-white transition-all duration-300 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl shadow-[0_10px_20px_rgba(79,70,229,0.3)] hover:shadow-[0_15px_30px_rgba(79,70,229,0.4)] hover:-translate-y-1 active:scale-95 group"
             >
-              <Plus className="w-4 h-4" />
-              Add Task
+              <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+              New Task
             </button>
-          </div>
-        )}
+          )}
         </div>
       </div>
 
-      <div className="flex flex-1 gap-4 pb-4 overflow-x-auto min-h-0">
+      <div className="flex flex-1 gap-8 pb-8 overflow-x-auto min-h-0 custom-scrollbar scroll-smooth">
         {!isAdmin && kanban.todo?.length === 0 && kanban.inprogress?.length === 0 && kanban.done?.length === 0 ? (
           <div className="flex flex-col items-center justify-center flex-1 h-64 text-gray-500">
             <p className="text-lg font-medium">No tasks assigned to you</p>

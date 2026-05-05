@@ -36,16 +36,16 @@ const ProjectSwitcher = () => {
 
   if (loading && projects.length === 0) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 animate-pulse">
-        <div className="w-5 h-5 bg-gray-200 rounded" />
-        <div className="w-24 h-4 bg-gray-200 rounded" />
+      <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100">
+        <div className="w-5 h-5 skeleton rounded" />
+        <div className="w-24 h-4 skeleton rounded" />
       </div>
     );
   }
 
   if (projects.length === 0) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-400 rounded-lg border border-dashed border-gray-200">
+      <div className="flex items-center gap-2 px-3 py-2 text-sm text-slate-400 rounded-xl border border-dashed border-slate-200">
         <FolderKanban className="w-4 h-4" />
         <span>No projects available</span>
       </div>
@@ -56,23 +56,23 @@ const ProjectSwitcher = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:border-gray-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 min-w-0 max-w-[220px]"
+        className="flex items-center gap-2.5 px-3.5 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 min-w-0 max-w-[220px]"
         id="project-switcher-btn"
       >
         {selectedProject?.color && (
           <span
-            className="w-2.5 h-2.5 rounded-full shrink-0"
-            style={{ backgroundColor: selectedProject.color }}
+            className="w-2.5 h-2.5 rounded-full shrink-0 ring-2 ring-offset-1"
+            style={{ backgroundColor: selectedProject.color, ringColor: selectedProject.color + '30' }}
           />
         )}
         <span className="truncate">{selectedProject?.name || 'Select Project'}</span>
-        <ChevronDown className={`w-4 h-4 shrink-0 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 shrink-0 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 z-50 w-64 mt-2 origin-top-left bg-white rounded-xl shadow-lg border border-gray-100 animate-in fade-in zoom-in-95 duration-200">
-          <div className="px-3 py-2 border-b border-gray-100">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Switch Project</p>
+        <div className="absolute left-0 z-50 w-64 mt-2 origin-top-left bg-white rounded-xl shadow-xl border border-slate-100 animate-fade-in-scale">
+          <div className="px-3.5 py-2.5 border-b border-slate-100">
+            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Switch Project</p>
           </div>
           <div className="py-1 max-h-64 overflow-y-auto custom-scrollbar">
             {projects.map((project) => {
@@ -81,10 +81,10 @@ const ProjectSwitcher = () => {
                 <button
                   key={project._id}
                   onClick={() => handleSelect(project._id)}
-                  className={`flex items-center w-full gap-3 px-3 py-2.5 text-sm transition-colors ${
+                  className={`flex items-center w-full gap-3 px-3.5 py-2.5 text-sm transition-all duration-150 ${
                     isSelected
                       ? 'bg-indigo-50 text-indigo-700 font-medium'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
                   <span
